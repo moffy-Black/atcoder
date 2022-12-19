@@ -15,7 +15,7 @@ acc new [contest name] --template python
 test
 
 ```
-contest/[A-F]/ oj t -c "python3 main.py" -d ./tests/
+contest/[A-F]/ oj t -c "python3 main.py" -d ./test/
 ```
 
 submit
