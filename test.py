@@ -1,68 +1,42 @@
 #!/opt/homebrew/bin/python
-import csv
+import sys
 
+def parse_data(lines):
+  N = int(lines[0])
+  a_list = list(map(int,lines[1].split()))
+  b_list = list(map(int,lines[2].split()))
+  return N,a_list,b_list
 
-class InputCSVError(Exception):
-  pass
+def extract_distance(a_list,b_list):
+  return [a-b for a,b in zip(a_list,b_list)]
 
-class LargeDataError(Exception):
-  pass
+def judge_enable_compose(distance_list):
+  return False if sum(distance_list)>=0 else True
 
-class RowsCSVError(Exception):
-  pass
-
-class UsrCSVError(Exception):
-  pass
-
-def csv_input(csv_path) -> tuple[list,Exception]:
-  try:
-    with open(csv_path, encoding='Shift_JIS') as f:
-      reader = csv.reader(f)
-      return [row for row in reader],None
-  except Exception as e:
-    return [],e
-
-def score_cnt(reader) -> tuple[dict,list]:
-  usr_score_cnt = dict();err_row=[]
-  for read in reader:
-    try:
-      usr=read[1];score=int(read[2])
-    except Exception:
-      err_row.append(read[0])
-    usr_score_cnt.setdefault(usr,[0]*3)
-    usr_score_cnt[usr][0]+=1;usr_score_cnt[usr][1]+=int(score)
-  return usr_score_cnt,err_row
-
-def calc_mean(usr_score_cnt) -> list:
-  usr_mean_score=dict();err_usr = []
-  for k in usr_score_cnt.keys():
-    try:
-      usr_mean_score.setdefault(k,round(usr_score_cnt[k][1] / usr_score_cnt[k][0]))
-    except Exception:
-      err_usr.append(k)
-  return usr_mean_score, err_usr
+def extract_min_prepare_num(N,distance_list):
+  sorted_dis_list = sorted(distance_list)
+  num_cnt,debt=0,0
+  for i in range(N):
+    if sorted_dis_list[i] >= 0:
+      break
+    debt += sorted_dis_list[i]
+    num_cnt+=1
+  if debt != 0:
+    for i in range(N-1,-1,-1):
+      debt += sorted_dis_list[i]
+      num_cnt+=1
+      if debt >= 0:
+        break
+  return num_cnt
 
 if __name__ == '__main__':
-  csv_path = './sample.csv'
-  csv_reader,err = csv_input(csv_path)
-  if err != None:
-    raise InputCSVError(err)
-  elif len(csv_reader) > 10**6:
-    raise LargeDataError('csvファイルのrowが10の6乗より多いです')
-
-  usr_score_cnt,err_row = score_cnt(csv_reader)
-  if len(err_row) > 0:
-    raise RowsCSVError(f'csvファイルに問題のある行があります\n{err_row}')
-
-  usr_mean_score,err_usr = calc_mean(usr_score_cnt)
-  if len(err_usr) > 0:
-    raise UsrCSVError(f'scoreの平均が計測できなかったユーザがいます\n{err_usr}')
-
-  sorted_usr_mean_score = dict( sorted(usr_mean_score.items(), key=lambda x:x[1],reverse=True))
-
-  cnt = 0;tmp_value=0
-  for k,v in sorted_usr_mean_score.items():
-    if tmp_value == v:
-      print(f'{k},{v}');tmp_value=v
-    elif cnt < 10:
-      print(f'{k},{v}');cnt+=1
+    lines = []
+    for l in sys.stdin:
+        lines.append(l.rstrip('\r\n'))
+    N,a_list,b_list = parse_data(lines)
+    distance_list = extract_distance(a_list,b_list)
+    if judge_enable_compose(distance_list):
+      print(-1)
+    else:
+      ans = extract_min_prepare_num(N,distance_list)
+      print(ans)
