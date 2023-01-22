@@ -9,7 +9,7 @@
 download
 
 ```
-acc new [contest name] --template python
+acc new [-c inquire] {contest name}
 ```
 
 test
