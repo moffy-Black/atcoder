@@ -26,7 +26,12 @@
       "id": "abc051_c",
       "label": "C",
       "title": "Back and Forth",
-      "url": "https://atcoder.jp/contests/abc051/tasks/abc051_c"
+      "url": "https://atcoder.jp/contests/abc051/tasks/abc051_c",
+      "directory": {
+        "path": "c",
+        "testdir": "test",
+        "submit": "main.py"
+      }
     },
     {
       "id": "abc051_d",
