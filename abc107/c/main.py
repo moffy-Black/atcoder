@@ -10,10 +10,10 @@ if __name__ == '__main__':
 
     ans = 10 ** 9
     for i in range(N-K+1):
-        range_list = X[i:i+K]
-        if range_list[0] < 0 and range_list[-1] > 0:
-            ans = min(ans, abs(range_list[0])*2+range_list[-1], range_list[-1]*2+abs(range_list[0]))
+        left,right = X[i],X[i+K-1]
+        if left < 0 and right > 0:
+            ans = min(ans, abs(left)*2+right, right*2+abs(left))
         else:
-            ans = min(ans,max(abs(range_list[0]),range_list[-1]))
+            ans = min(ans,max(abs(left),right))
 
     print(ans)
